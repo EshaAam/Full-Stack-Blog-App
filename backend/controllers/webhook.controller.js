@@ -23,7 +23,7 @@ export const clerkWebhook = async (req, res) => {
     console.log('Webhook event received:', evt);
 
     if (evt.type === 'user.created') {
-        console.log("Event data:", evt.data);
+        // console.log("Event data:", evt.data);
 
         const newUser = new User({
             clerkUserId: evt.data.id,

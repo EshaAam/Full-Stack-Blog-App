@@ -1,29 +1,52 @@
 import React from 'react';
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import Image from "../components/Image";
 import PostMenuActions from '../components/PostMenuActions';
 import Search from '../components/Search';
 import Comments from '../components/Comments';
+import axios from 'axios';
+import { useQuery } from '@tanstack/react-query';
+import { format } from 'timeago.js';
+
+
+const fetchPost = async (slug) => {
+  const res = await axios.get(`${import.meta.env.VITE_API_URL}/posts/${slug}`);
+  return res.data;
+};
 
 const SinglePostPage = () => {
+
+  const { slug } = useParams();
+  const { isLoading, error, data } = useQuery({
+    queryKey: ['post', slug],
+    queryFn: () => fetchPost(slug)
+  });
+
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>An error occurred: {error.message}</div>;
+
+  const post = data || {}; // if data is null, set post to an empty object
+  const user = post.user || { username: "Postman", bio: "" };
+
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex flex-col lg:flex-row gap-8">
         {/* details and paragraph */}
         <div className="flex-1">
           <div className="mb-4">
-            <h1 className="text-4xl font-bold">Developing Web Design</h1>
-            <div className="text-blue-800">
+            <h1 className="text-4xl font-bold">{post.title || "Untitle Post"}</h1>
+            <div className="text-gray-500 mt-1 ml-16">
               <span>Written by</span>
-              <Link to="" className="text-blue-800"> John Doe</Link>
-              <span className="text-gray-500"> on </span>
-              <Link to="" className="text-blue-800"> Web Design</Link>
-              <span className="text-gray-500"> 2 days ago</span>
+              <Link to="" className="text-blue-800 ml-2">{user.username}</Link>
+              <span className="text-gray-500 ml-1"> on </span>
+              <Link to="" className="text-blue-800 ml-1"> {post.category || "Uncategorized"}</Link>
+              <span className="text-gray-500 ml-2">{post.createdAt? format(post.createdAt) : "Unknown Date"} </span>
             </div>
           </div>
-          <p>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Ratione, voluptatem? Consequatur nulla sint magnam ut et aliquid, iusto sequi expedita. Lorem ipsum dolor sit amet consectetur adipisicing elit. Blanditiis veniam nobis, nam officiis sed totam cum reprehenderit vitae corrupti est similique quo voluptatum deserunt ipsum sit eius? Voluptate, nam reprehenderit.
+          <p className="text-lg text-justify">
+            {post.content || "No content available"}
           </p>
+          
         </div>
         {/* image */}
         <div className="hidden lg:block w-full lg:w-1/3">
@@ -143,7 +166,7 @@ const SinglePostPage = () => {
                 w="48"
                 h="48"
               />
-              <Link className="text-blue-800">John Doe</Link>
+              <Link className="text-blue-800">{user.username}</Link>
             </div>
             <p className="text-sm text-gray-500">
               Lorem ipsum dolor sit amet consectetur
@@ -179,11 +202,11 @@ const SinglePostPage = () => {
           </div>
           <h1 className='mt-8 mb-4 text-sm font-medium'>Search</h1>
           <Search />
-          
+
         </div>
 
       </div>
-      <Comments />
+      <Comments postId={data._id} />
 
     </div>
   );

@@ -22,8 +22,7 @@ const Homepage = () => {
                         Welcome to E-Blog. Here thoughts meet with reality📝
                     </h1>
                     <p className="mt-6 text-md md:text-xl">
-                        Lorem ipsum dolor sit, amet consectetur adipisicing elit. Sequi
-                        rerum accusantium.
+                        Let your voice be heard, and let your ideas inspire others. Write your story, share your idea, and be a part of something bigger than yourself. Welcome to E-Blog, where thoughts meet with reality.📝
                     </p>
                 </div>
                 {/* Animated cyclic button */}

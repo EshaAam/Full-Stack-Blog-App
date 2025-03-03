@@ -1,11 +1,17 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "./Image";
 //import { IKImage } from 'imagekitio-react';
 import { Link } from "react-router-dom";
-import { SignedIn, SignedOut, UserButton } from "@clerk/clerk-react";
+import { SignedIn, SignedOut, useAuth, UserButton } from "@clerk/clerk-react";
 
 const Navbar = () => {
   const [open, setOpen] = useState(false);
+  const { getToken } = useAuth();
+  useEffect(() => {
+    getToken().then((token) => {
+      console.log(token);
+    })
+  });
 
   return (
     <div className="w-full h-12 md:h-20 flex items-center justify-between">
@@ -44,16 +50,15 @@ const Navbar = () => {
         <Link to="/">Popular</Link>
         <Link to="/">About</Link>
         <SignedOut>
-        <Link to="/login">
-          <button className=" text-white px-4 py-2 bg-blue-800 rounded-3xl">Login</button>
-        </Link>
+          <Link to="/login">
+            <button className=" text-white px-4 py-2 bg-blue-800 rounded-3xl">Login</button>
+          </Link>
         </SignedOut>
         <SignedIn>
           <UserButton />
         </SignedIn>
 
       </div>
-
     </div>
   )
 }
