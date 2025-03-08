@@ -1,6 +1,29 @@
-import { Link } from "react-router-dom"
-import Image from "./Image"
+import { Link } from "react-router-dom";
+import Image from "./Image";
+import axios from "axios";
+import { useQuery } from "@tanstack/react-query";
+
+const fetchPost = async () => {
+  const res = await axios.get(
+    `${import.meta.env.VITE_API_URL}/posts?featured=true&limit=4&sort=newest`
+  );
+  return res.data;
+};
+
 const FeaturedPosts = () => {
+  const { isPending, error, data } = useQuery({
+    queryKey: ["featuredPosts"],
+    queryFn: () => fetchPost(),
+  });
+
+  if (isPending) return "loading...";
+  if (error) return "Something went wrong!" + error.message;
+
+  const posts = data.posts;
+  if (!posts || posts.length === 0) {
+    return;
+  }
+  
   return (
     <div className='mt-8 flex flex-col lg:flex-row gap-8'>
       {/* First post */}
